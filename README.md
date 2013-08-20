@@ -3,6 +3,8 @@ EVCircularProgressView
 
 An iOS 7-inspired circular progress view
 
+![screenshot](Screenshot.png)
+
 Installation
 ------------
 
