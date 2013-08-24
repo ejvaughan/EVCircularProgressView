@@ -161,6 +161,7 @@
         self.tintColor = progressTintColor;
     } else {
         _progressTintColor = progressTintColor;
+        [self tintColorDidChange];
     }
 }
 
