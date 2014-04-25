@@ -7,6 +7,7 @@
 //
 
 #import "EVCircularProgressView.h"
+#import <QuartzCore/QuartzCore.h>
 
 #define DEGREES_TO_RADIANS(x) (x)/180.0*M_PI
 #define RADIANS_TO_DEGREES(x) (x)/M_PI*180.0
@@ -158,7 +159,7 @@
 - (void)setProgressTintColor:(UIColor *)progressTintColor
 {
     if ([self respondsToSelector:@selector(setTintColor:)]) {
-        self.tintColor = progressTintColor;
+        [self setValue:progressTintColor forKey:@"tintColor"];
     } else {
         _progressTintColor = progressTintColor;
         [self tintColorDidChange];
@@ -168,7 +169,7 @@
 - (UIColor *)progressTintColor
 {
     if ([self respondsToSelector:@selector(tintColor)]) {
-        return self.tintColor;
+        return [self valueForKey:@"tintColor"];
     } else {
         return _progressTintColor;
     }
