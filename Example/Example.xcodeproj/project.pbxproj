@@ -54,8 +54,8 @@
 		AAD6F89A17C40CB700B2F44F /* EVViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EVViewController.m; sourceTree = "<group>"; };
 		AAD6F89C17C40CB700B2F44F /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		AAD6F8A317C40CB700B2F44F /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		AAD6F8B917C40CCB00B2F44F /* EVCircularProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EVCircularProgressView.h; path = Example/EVCircularProgressView.h; sourceTree = "<group>"; };
-		AAD6F8BA17C40CCB00B2F44F /* EVCircularProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EVCircularProgressView.m; path = Example/EVCircularProgressView.m; sourceTree = "<group>"; };
+		AAD6F8B917C40CCB00B2F44F /* EVCircularProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EVCircularProgressView.h; path = ../EVCircularProgressView.h; sourceTree = "<group>"; };
+		AAD6F8BA17C40CCB00B2F44F /* EVCircularProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EVCircularProgressView.m; path = ../EVCircularProgressView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
