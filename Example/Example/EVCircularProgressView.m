@@ -53,12 +53,10 @@
 }
 
 #if TARGET_OS_OSX
-
 - (BOOL)layer:(CALayer *)layer shouldInheritContentsScale:(CGFloat)newScale fromWindow:(NSWindow *)UIWindow
 {
     return YES;
 }
-
 #endif
 
 @end
@@ -107,7 +105,6 @@
 #endif
     
     // Set up the background layer
-    
     EVCircularProgressViewBackgroundLayer *backgroundLayer = [[EVCircularProgressViewBackgroundLayer alloc] init];
     backgroundLayer.frame = self.bounds;
     backgroundLayer.tintColor = self.progressTintColor;
@@ -115,7 +112,6 @@
     self.backgroundLayer = backgroundLayer;
     
     // Set up the shape layer
-    
     CAShapeLayer *shapeLayer = [[CAShapeLayer alloc] init];
     shapeLayer.frame = self.bounds;
     shapeLayer.fillColor = nil;
@@ -141,13 +137,7 @@
         self.shapeLayer.lineWidth = 3;
         
         CGMutablePathRef path = CGPathCreateMutable();
-#ifdef TARGET_OS_IPHONE
-        CGAffineTransform tfm = CGAffineTransformMakeTranslation(0, CGRectGetHeight(self.bounds));
-        tfm = CGAffineTransformScale(tfm, 1.0, -1.0);
-#else
-        CGAffineTransform tfm = CGAffineTransformIdentity;
-#endif
-        CGPathAddArc(path, &tfm, CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds), self.bounds.size.width/2 - 2, M_PI_2, -3 * M_PI_2, YES);
+        CGPathAddArc(path, NULL, CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds), self.bounds.size.width/2 - 2, -M_PI_2, 3 * M_PI_2, NO);
         self.shapeLayer.path = path;
         CGPathRelease(path);
         
@@ -155,7 +145,7 @@
             CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
             animation.fromValue = (startingFromIndeterminateState) ? @0 : @(self.shapeLayer.presentationLayer.strokeEnd);
             animation.toValue = [NSNumber numberWithFloat:progress];
-            animation.duration = 1;
+            animation.duration = 0.5;
             self.shapeLayer.strokeEnd = progress;
             
             [self.shapeLayer addAnimation:animation forKey:@"animation"];
@@ -203,10 +193,22 @@
 - (void)sendAction:(SEL)action to:(id)target forEvent:(UIEvent *)event
 {
     // Ignore touches that occur before progress initiates
-    
     if (self.progress > 0) {
         [super sendAction:action to:target forEvent:event];
     }
+}
+#else
+- (void)mouseUp:(NSEvent *)event
+{
+    // Ignore touches that occur before progress initiates
+    if (self.progress > 0) {
+        [self sendAction:self.action to:self.target];
+    }
+}
+
+- (BOOL)isFlipped
+{
+    return YES;
 }
 #endif
 
@@ -227,13 +229,7 @@
     
     self.shapeLayer.lineWidth = 1;
     CGMutablePathRef path = CGPathCreateMutable();
-#ifdef TARGET_OS_IPHONE
-    CGAffineTransform tfm = CGAffineTransformMakeTranslation(0, CGRectGetHeight(self.bounds));
-    tfm = CGAffineTransformScale(tfm, 1.0, -1.0);
-#else
-    CGAffineTransform tfm = CGAffineTransformIdentity;
-#endif
-    CGPathAddArc(path, &tfm, CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds), self.bounds.size.width/2 - 1, DEGREES_TO_RADIANS(12), DEGREES_TO_RADIANS(348), NO);
+    CGPathAddArc(path, NULL, CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds), self.bounds.size.width/2 - 1, DEGREES_TO_RADIANS(12), DEGREES_TO_RADIANS(348), NO);
     self.shapeLayer.path = path;
     CGPathRelease(path);
     

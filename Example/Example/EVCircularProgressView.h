@@ -23,7 +23,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- EVCircularProgressView is a UIControl (iOS) or NSButton (macOS) subclass that mimics the circular progress view found in iOS 7, such as the one that is displayed when downloading an app from the App Store.
+ EVCircularProgressView is a UIControl (iOS) or NSControl (macOS) subclass that mimics the circular progress view found in iOS 7, such as the one that is displayed when downloading an app from the App Store.
  
  The progress view initally spins around indeterminately, but then displays a determinate value when the progress property is set to a non-zero value.
 */

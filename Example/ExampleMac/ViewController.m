@@ -22,6 +22,7 @@
 
 - (void)beginUpdatingProgressView
 {
+    //[self.progressView setProgress:0.5 animated:YES];
     self.updateTimer = [NSTimer scheduledTimerWithTimeInterval:0.02 target:self selector:@selector(updateProgress:) userInfo:nil repeats:YES];
 }
 
@@ -45,7 +46,7 @@
 
 - (IBAction)progressViewPressed:(EVCircularProgressView *)sender
 {
-    sender.progress = 0;
+    [self.updateTimer invalidate];
 }
 
 @end
