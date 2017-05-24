@@ -12,9 +12,9 @@
 #define DEGREES_TO_RADIANS(x) (x)/180.0*M_PI
 #define RADIANS_TO_DEGREES(x) (x)/M_PI*180.0
 
-@interface EVCircularProgressViewBackgroundLayer : CALayer
+@interface EVCircularProgressViewBackgroundLayer : CALayer <CALayerDelegate>
 
-@property (nonatomic, strong) UIColor *tintColor;
+@property (nonatomic, strong) Color *tintColor;
 
 @end
 
@@ -25,13 +25,17 @@
     self = [super init];
     
     if (self) {
+#if TARGET_OS_IPHONE
         self.contentsScale = [UIScreen mainScreen].scale;
+#else
+        self.delegate = self;
+#endif
     }
     
     return self;
 }
 
-- (void)setTintColor:(UIColor *)tintColor
+- (void)setTintColor:(Color *)tintColor
 {
     _tintColor = tintColor;
     
@@ -48,6 +52,15 @@
     CGContextFillRect(ctx, CGRectMake(CGRectGetMidX(self.bounds) - 4, CGRectGetMidY(self.bounds) - 4, 8, 8));
 }
 
+#if TARGET_OS_OSX
+
+- (BOOL)layer:(CALayer *)layer shouldInheritContentsScale:(CGFloat)newScale fromWindow:(NSWindow *)UIWindow
+{
+    return YES;
+}
+
+#endif
+
 @end
 
 
@@ -60,7 +73,7 @@
 @end
 
 @implementation EVCircularProgressView {
-    UIColor *_progressTintColor;
+    Color *_progressTintColor;
 }
 
 - (instancetype)init
@@ -87,7 +100,11 @@
 
 - (void)commonInit
 {
-    _progressTintColor = [UIColor blackColor];
+    _progressTintColor = [Color blackColor];
+    
+#if TARGET_OS_OSX
+    self.wantsLayer = YES;
+#endif
     
     // Set up the background layer
     
@@ -123,15 +140,20 @@
         
         self.shapeLayer.lineWidth = 3;
         
-        self.shapeLayer.path = [UIBezierPath bezierPathWithArcCenter:CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds))
-                                                              radius:self.bounds.size.width/2 - 2
-                                                          startAngle:3*M_PI_2
-                                                            endAngle:3*M_PI_2 + 2*M_PI
-                                                           clockwise:YES].CGPath;
+        CGMutablePathRef path = CGPathCreateMutable();
+#ifdef TARGET_OS_IPHONE
+        CGAffineTransform tfm = CGAffineTransformMakeTranslation(0, CGRectGetHeight(self.bounds));
+        tfm = CGAffineTransformScale(tfm, 1.0, -1.0);
+#else
+        CGAffineTransform tfm = CGAffineTransformIdentity;
+#endif
+        CGPathAddArc(path, &tfm, CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds), self.bounds.size.width/2 - 2, M_PI_2, -3 * M_PI_2, YES);
+        self.shapeLayer.path = path;
+        CGPathRelease(path);
         
         if (animated) {
             CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
-            animation.fromValue = (startingFromIndeterminateState) ? @0 : nil;
+            animation.fromValue = (startingFromIndeterminateState) ? @0 : @(self.shapeLayer.presentationLayer.strokeEnd);
             animation.toValue = [NSNumber numberWithFloat:progress];
             animation.duration = 1;
             self.shapeLayer.strokeEnd = progress;
@@ -156,7 +178,7 @@
     [self setProgress:progress animated:NO];
 }
 
-- (void)setProgressTintColor:(UIColor *)progressTintColor
+- (void)setProgressTintColor:(Color *)progressTintColor
 {
     if ([self respondsToSelector:@selector(setTintColor:)]) {
         [self setValue:progressTintColor forKey:@"tintColor"];
@@ -166,7 +188,7 @@
     }
 }
 
-- (UIColor *)progressTintColor
+- (Color *)progressTintColor
 {
     if ([self respondsToSelector:@selector(tintColor)]) {
         return [self valueForKey:@"tintColor"];
@@ -177,6 +199,7 @@
 
 #pragma mark - UIControl overrides
 
+#if TARGET_OS_IPHONE
 - (void)sendAction:(SEL)action to:(id)target forEvent:(UIEvent *)event
 {
     // Ignore touches that occur before progress initiates
@@ -185,6 +208,7 @@
         [super sendAction:action to:target forEvent:event];
     }
 }
+#endif
 
 #pragma mark - Other methods
 
@@ -202,11 +226,17 @@
     self.backgroundLayer.hidden = YES;
     
     self.shapeLayer.lineWidth = 1;
-    self.shapeLayer.path = [UIBezierPath bezierPathWithArcCenter:CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds))
-                                                          radius:self.bounds.size.width/2 - 1
-                                                      startAngle:DEGREES_TO_RADIANS(348)
-                                                        endAngle:DEGREES_TO_RADIANS(12)
-                                                       clockwise:NO].CGPath;
+    CGMutablePathRef path = CGPathCreateMutable();
+#ifdef TARGET_OS_IPHONE
+    CGAffineTransform tfm = CGAffineTransformMakeTranslation(0, CGRectGetHeight(self.bounds));
+    tfm = CGAffineTransformScale(tfm, 1.0, -1.0);
+#else
+    CGAffineTransform tfm = CGAffineTransformIdentity;
+#endif
+    CGPathAddArc(path, &tfm, CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds), self.bounds.size.width/2 - 1, DEGREES_TO_RADIANS(12), DEGREES_TO_RADIANS(348), NO);
+    self.shapeLayer.path = path;
+    CGPathRelease(path);
+    
     self.shapeLayer.strokeEnd = 1;
     
     [CATransaction commit];
